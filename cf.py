@@ -70,20 +70,19 @@ class CFApi(object):
                                card_number, card_expiry_year,
                                card_expiry_month, card_cvv,
                                address2=None, vat=None):
-        required_info = {"first_name": first_name,
-                        "last_name": last_name,
-                        "address": address,
-                        "city": city,
-                        "state": state,
-                        "zipcode": zipcode,
-                        "country": country,
-                        "card_number": card_number,
-                        "card_expiry_year": card_expiry_year,
-                        "card_expiry_month": card_expiry_month,
-                        "card_cvv": card_cvv}
-        optional_info = {k: v for k, v in (('address2', address2), ('vat', vat)) if v is not None}
-        data = required_info.copy()
-        data.update(optional_info)
+        data = {"first_name": first_name,
+                "last_name": last_name,
+                "address": address,
+                "city": city,
+                "state": state,
+                "zipcode": zipcode,
+                "country": country,
+                "card_number": card_number,
+                "card_expiry_year": card_expiry_year,
+                "card_expiry_month": card_expiry_month,
+                "card_cvv": card_cvv,
+                "address2": address2,
+                "vat": vat}
         json_response = self.api_request('/user/billing/profile', data=data, method='POST')
         return json_response
 
@@ -92,7 +91,7 @@ class CFApi(object):
                                card_number, card_expiry_year,
                                card_expiry_month, card_cvv,
                                address2=None, vat=None):
-        required_info = {"first_name": first_name,
+        data = {"first_name": first_name,
                         "last_name": last_name,
                         "address": address,
                         "city": city,
@@ -102,10 +101,9 @@ class CFApi(object):
                         "card_number": card_number,
                         "card_expiry_year": card_expiry_year,
                         "card_expiry_month": card_expiry_month,
-                        "card_cvv": card_cvv}
-        optional_info = {k: v for k, v in (('address2', address2), ('vat', vat)) if v is not None}
-        data = required_info.copy()
-        data.update(optional_info)
+                        "card_cvv": card_cvv,
+                        "address2": address2,
+                        "vat": vat}
         json_response = self.api_request('/user/billing/profile', data=data, method='PUT')
         return json_response
 
@@ -218,13 +216,7 @@ class CFApi(object):
         return json_response
 
     def create_access_rule(self, mode, conf_target, conf_value, notes=None):
-        required_info = {"mode": mode, "configuration": {"target": conf_target, "value": conf_value}}
-        if notes is not None:
-            optional_info = {"notes": notes}
-        else:
-            optional_info = {}
-        data = required_info.copy()
-        data.update(optional_info)
+        data = {"mode": mode, "configuration": {"target": conf_target, "value": conf_value}, "notes": notes}
         json_response = self.api_request('/user/firewall/access_rules/rules', method='POST', data=data)
         return json_response
 
@@ -242,10 +234,7 @@ class CFApi(object):
 
     # Zone
     def create_zone(self, name, jump_start=None, organization=None):
-        optional_info = {k: v for k, v in (('jump_start', jump_start), ('organization', organization)) if v is not None}
-        required_info = {"name": name}
-        data = required_info.copy()
-        data.update(optional_info)
+        data = {"name": name, "jump_start": jump_start, "organization": organization}
         json_response = self.api_request('/zones', data=data, method='POST')
         return json_response
 
@@ -267,7 +256,7 @@ class CFApi(object):
                  ('order', order),
                  ('direction', direction),
                  ('match', match)) if v is not None}
-        json_response = self.api_request('/zones', params=params, method='GET')
+        json_response = self.api_request('/zones', params=params)
         return json_response
 
     def get_zone_details(self, zone_id):
@@ -429,92 +418,92 @@ class CFApi(object):
         json_response = self.api_request('/zones/'+zone_id+'/settings', method="PATCH")
         return json_response
 
-    def change_zone_always_online(self, value="on", zone_id):
+    def change_zone_always_online(self, zone_id, value="on"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/always_online', data=data, method="PATCH")
         return json_response
 
-    def change_zone_browser_cache_ttl(self, value=14400, zone_id):
+    def change_zone_browser_cache_ttl(self, zone_id, value=14400):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/browser_cache_ttl', data=data, method="PATCH")
         return json_response
 
-    def change_zone_browser_check(self, value="on", zone_id):
+    def change_zone_browser_check(self, zone_id, value="on"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/browser_check', data=data, method="PATCH")
         return json_response
 
-    def change_zone_cache_level(self, value="aggressive", zone_id):
+    def change_zone_cache_level(self, zone_id, value="aggressive"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/cache_level', data=data, method="PATCH")
         return json_response
 
-    def change_zone_challenge_ttl(self, value=1800, zone_id):
+    def change_zone_challenge_ttl(self, zone_id, value=1800):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/challenge_ttl', data=data, method="PATCH")
         return json_response
 
-    def change_zone_development_mode(self, value="off", zone_id):
+    def change_zone_development_mode(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/development_mode', data=data, method="PATCH")
         return json_response
 
-    def change_zone_email_obfuscation(self, value="on", zone_id):
+    def change_zone_email_obfuscation(self, zone_id, value="on"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/email_obfuscation', data=data, method="PATCH")
         return json_response
 
-    def change_zone_hotlink_protection(self, value="off", zone_id):
+    def change_zone_hotlink_protection(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/hotlink_protection', data=data, method="PATCH")
         return json_response
 
-    def change_zone_ip_geolocation(self, value="on", zone_id):
+    def change_zone_ip_geolocation(self, zone_id, value="on"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/ip_geolocation', data=data, method="PATCH")
         return json_response
 
-    def change_zone_ipv6(self, value="off", zone_id):
+    def change_zone_ipv6(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/ipv6', data=data, method="PATCH")
         return json_response
 
-    def change_zone_minify(self, min_html="off", min_css="off", min_js="off", zone_id):
+    def change_zone_minify(self, zone_id, min_html="off", min_css="off", min_js="off"):
         data = {"value": {"css": min_css, "html": min_html, "min_js": min_js}}
         json_response = self.api_request('/zones/'+zone_id+'/settings/minify', data=data, method="PATCH")
         return json_response
 
-    def change_zone_mobile_redirect(self, status="off", mobile_subdomain, strip_uri, zone_id):
+    def change_zone_mobile_redirect(self, mobile_subdomain, strip_uri, zone_id, status="off"):
         data = {"value": {"status": status, "mobile_subdomain": mobile_subdomain, "strip_uri": strip_uri}}
         json_response = self.api_request('/zones/'+zone_id+'/settings/mobile_redirect', data=data, method="PATCH")
         return json_response
 
-    def change_zone_mirage(self, value="off", zone_id):
+    def change_zone_mirage(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/mirage', data=data, method="PATCH")
         return json_response
 
-    def change_zone_origin_error_page_pass_thru(self, value="off", zone_id):
+    def change_zone_origin_error_page_pass_thru(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/origin_error_page_pass_thru', data=data, method="PATCH")
         return json_response
 
-    def change_zone_polish(self, value="off", zone_id):
+    def change_zone_polish(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/polish', data=data, method="PATCH")
         return json_response
 
-    def change_zone_prefetch_preload(self, value="off", zone_id):
+    def change_zone_prefetch_preload(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/prefetch_preload', data=data, method="PATCH")
         return json_response
 
-    def change_zone_response_buffering(self, value="off", zone_id):
+    def change_zone_response_buffering(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/response_buffering', data=data, method="PATCH")
         return json_response
 
-    def change_zone_rocket_loader(self, value="off", zone_id):
+    def change_zone_rocket_loader(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/rocket_loader', data=data, method="PATCH")
         return json_response
@@ -532,32 +521,32 @@ class CFApi(object):
         json_response = self.api_request('/zones/'+zone_id+'/settings/security_header', data=data, method="PATCH")
         return json_response
 
-    def change_zone_security_level(self, value="medium", zone_id):
+    def change_zone_security_level(self, zone_id, value="medium"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/security_level', data=data, method="PATCH")
         return json_response
 
-    def change_zone_server_side_exclude(self, value="on", zone_id):
+    def change_zone_server_side_exclude(self, zone_id, value="on"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/server_side_exclude', data=data, method="PATCH")
         return json_response
 
-    def change_zone_sort_query_string_for_cache(self, value="off", zone_id):
+    def change_zone_sort_query_string_for_cache(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/sort_query_string_for_cache', data=data, method="PATCH")
         return json_response
 
-    def change_zone_ssl(self, value="off", zone_id):
+    def change_zone_ssl(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/ssl', data=data, method="PATCH")
         return json_response
 
-    def change_zone_tls_1_2_only(self, value="off", zone_id):
+    def change_zone_tls_1_2_only(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/tls_1_2_only', data=data, method="PATCH")
         return json_response
 
-    def change_zone_tls_client_auth(self, tls_id="tls_client_auth", tls_value="on", tls_editable=True, tls_modified_on, zone_id):
+    def change_zone_tls_client_auth(self, tls_modified_on, zone_id, tls_id="tls_client_auth", tls_value="on", tls_editable=True):
         data = {"value":
                         {
                         "id":tls_id,
@@ -569,17 +558,130 @@ class CFApi(object):
         json_response = self.api_request('/zones/'+zone_id+'/settings/tls_client_auth', data=data, method="PATCH")
         return json_response
 
-    def change_zone_true_client_ip_header(self, value="off", zone_id):
+    def change_zone_true_client_ip_header(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/true_client_ip_header', data=data, method="PATCH")
         return json_response
 
-    def change_zone_waf(self, value="off", zone_id):
+    def change_zone_waf(self, zone_id, value="off"):
         data = {"value": value}
         json_response = self.api_request('/zones/'+zone_id+'/settings/waf', data=data, method="PATCH")
         return json_response
 
+    # DNS Records for a Zone
+    def create_dns_record(self, zone_id, type, name, content, ttl=None):
+        data = {"type": type, "name": name, "content": content, "ttl": None}
+        json_response = self.api_request('/zones/'+zone_id+'/dns_records', data=data, method="POST")
+        return json_response
+
+    def list_dns_records(self, zone_id,
+                              type=None,
+                              name=None,
+                              content=None,
+                              page=1,
+                              per_page=50,
+                              order=None,
+                              direction=None,
+                              match="all"):
+        params = {k: v for k, v in (('page', page),
+                 ('per_page', per_page),
+                 ('order', order),
+                 ('type', type),
+                 ('name', name),
+                 ('content', content),
+                 ('direction', direction),
+                 ('match', match)) if v is not None}
+        json_response = self.api_request('/zones/'+zone_id+'/dns_records', params=params)
+        return json_response
+
+    def dns_record_details(self, zone_id, record_id):
+        json_response = self.api_request('/zones/'+zone_id+'/dns_records/'+ record_id)
+        return json_response
+
+    # def update_dns_record(self, zone_id, record_id, ):
+
+    def delete_dns_record(self, zone_id, record_id):
+        json_response = self.api_request('/zones/'+zone_id+'/dns_records/'+ record_id, method="DELETE")
+        return json_response
+
+    # Railgun connections for a Zone
+    def get_available_zone_railguns(self, zone_id):
+        json_response = self.api_request('/zones/'+zone_id+'/railguns')
+        return json_response
+
+    def get_railgun_zone_details(self, zone_id, railgun_id):
+        json_response = self.api_request('/zones/'+zone_id+'/railguns/'+railgun_id)
+        return json_response
+
+    def test_railgun_zone_connection(self, zone_id, railgun_id):
+        json_response = self.api_request('/zones/'+zone_id+'/railguns/'+railgun_id+'/diagnose')
+        return json_response
+
+    def connect_to_zone_railgun(self, zone_id, railgun_id):
+        data = {"connected": True}
+        json_response = self.api_request('/zones/'+zone_id+'/railguns/'+railgun_id, method='PATCH')
+        return json_response
+
+    def disconnect_to_zone_railgun(self, zone_id, railgun_id):
+        data = {"connected": False}
+        json_response = self.api_request('/zones/'+zone_id+'/railguns/'+railgun_id, method='PATCH')
+        return json_response
+
+    # Zone Analytics
+    def dashboard_view(self, zone_id, since=-10080, until=0, continuous=True, exclude_series):
+        params = {k: v for k, v in (('since', since),
+                 ('until', until),
+                 ('continuous', continuous),
+                 ('exclude_series', exclude_series) if v is not None}
+        json_response = self.api_request('/zones/'+zone_id+'/analytics/dashboard', params=params)
+        return json_response
+
+    def dashboard_view_by_colos(self, zone_id, since=-10080, until=0, continuous=True, exclude_series):
+        params = {k: v for k, v in (('since', since),
+                 ('until', until),
+                 ('continuous', continuous),
+                 ('exclude_series', exclude_series) if v is not None}
+        json_response = self.api_request('/zones/'+zone_id+'/analytics/colos', params=params)
+        return json_response
+
+    # Railguns
+    def create_railgun(self, name):
+        data = {"name": name}
+        json_response = self.api_request('/railguns', data=data, method="POST")
+        return json_response
+
+    def list_all_railguns(self, page=1, per_page=20, direction=None):
+        params = {k: v for k, v in (('page', page),
+        ('per_page', per_page),
+        ('direction', direction)) if v is not None}
+        json_response = self.api_request('/railguns', params=params)
+
+    def get_railgun_details(self, railgun_id):
+        json_response = self.api_request('/railguns/'+railgun_id)
+        return json_response
+
+    def get_zones_connected_to_railguns(self, railgun_id):
+        json_response = self.api_request('/railguns/'+railgun_id+'/zones')
+        return json_response
+
+    def enable_railgun(self, railgun_id):
+        data = {"enabled": True}
+        json_response = self.api_request('/railguns/'+railgun_id, data=data, method="PATCH")
+        return json_response
+
+    def disable_railgun(self, railgun_id):
+        data = {"enabled": False}
+        json_response = self.api_request('/railguns/'+railgun_id, data=data, method="PATCH")
+        return json_response
+
+    def disable_railgun(self, railgun_id):
+        json_response = self.api_request('/railguns/'+railgun_id, method="DELETE")
+        
 if __name__ == '__main__':
     auth_mail = os.environ.get('CF_AUTH_MAIL')
     auth_key = os.environ.get('CF_AUTH_KEY')
     cf = CFApi(auth_mail, auth_key)
+    #print cf.create_dns_record("5878027aaf0088c8e10fc402fc1ce0e6", type="TXT", name="TEST", content="OK")
+    #print cf.create_access_rule(mode="challenge", conf_target="country", conf_value="AO", notes="note test")
+    #print cf.list_dns_records("5878027aaf0088c8e10fc402fc1ce0e6")
+    #print cf.dns_record_details("5878027aaf0088c8e10fc402fc1ce0e6", "379630845d0471712d1bc957ed397bd5")
