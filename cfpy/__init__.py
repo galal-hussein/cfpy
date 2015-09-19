@@ -5,7 +5,7 @@ import os
 CF_API_ENDPOINT = 'https://api.cloudflare.com/client/v4'
 
 
-class CFApi(object):
+class CFapi(object):
 
     def __init__(self, auth_mail, auth_key):
         self.auth_mail = auth_mail
@@ -628,19 +628,19 @@ class CFApi(object):
         return json_response
 
     # Zone Analytics
-    def dashboard_view(self, zone_id, since=-10080, until=0, continuous=True, exclude_series):
+    def dashboard_view(self, zone_id,  exclude_series, since=-10080, until=0, continuous=True):
         params = {k: v for k, v in (('since', since),
                  ('until', until),
                  ('continuous', continuous),
-                 ('exclude_series', exclude_series) if v is not None}
+                 ('exclude_series', exclude_series)) if v is not None}
         json_response = self.api_request('/zones/'+zone_id+'/analytics/dashboard', params=params)
         return json_response
 
-    def dashboard_view_by_colos(self, zone_id, since=-10080, until=0, continuous=True, exclude_series):
+    def dashboard_view_by_colos(self, zone_id,  exclude_series, since=-10080, until=0, continuous=True):
         params = {k: v for k, v in (('since', since),
                  ('until', until),
                  ('continuous', continuous),
-                 ('exclude_series', exclude_series) if v is not None}
+                 ('exclude_series', exclude_series)) if v is not None}
         json_response = self.api_request('/zones/'+zone_id+'/analytics/colos', params=params)
         return json_response
 
@@ -676,12 +676,9 @@ class CFApi(object):
 
     def disable_railgun(self, railgun_id):
         json_response = self.api_request('/railguns/'+railgun_id, method="DELETE")
-        
+
 if __name__ == '__main__':
     auth_mail = os.environ.get('CF_AUTH_MAIL')
     auth_key = os.environ.get('CF_AUTH_KEY')
-    cf = CFApi(auth_mail, auth_key)
-    #print cf.create_dns_record("5878027aaf0088c8e10fc402fc1ce0e6", type="TXT", name="TEST", content="OK")
-    #print cf.create_access_rule(mode="challenge", conf_target="country", conf_value="AO", notes="note test")
-    #print cf.list_dns_records("5878027aaf0088c8e10fc402fc1ce0e6")
-    #print cf.dns_record_details("5878027aaf0088c8e10fc402fc1ce0e6", "379630845d0471712d1bc957ed397bd5")
+    cf = CFapi(auth_mail, auth_key)
+    print cf.list_zones()
