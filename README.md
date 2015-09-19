@@ -43,3 +43,9 @@ The uncovered endpoints:
 - WAF related endpoints
 - Organizations related endpoints
 - User-level Firewall access rule
+
+##To Do
+
+- Create A Documentation.
+- Implement the uncovered endpoints.
+- Better Error Handling implementation.
