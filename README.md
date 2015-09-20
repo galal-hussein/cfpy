@@ -35,6 +35,10 @@ The covered endpoints:
 - Railgun connections for a Zone
 - Zone Analytics
 - Railguns
+- Custom Pages for a Zone
+- Custom SSL for a Zone
+- Keyless SSL for a Zone
+- Firewall access rule for a Zone
 
 The uncovered endpoints:
 
