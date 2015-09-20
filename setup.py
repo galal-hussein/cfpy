@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='cfpy',
-    version='0.1',
+    version='0.2',
     description='CloudFlare V4 Python Wrapper',
     author='Hussein Galal',
     author_email='hussein.galal.ahmed.11@gmail.com',
