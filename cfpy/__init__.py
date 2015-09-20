@@ -784,12 +784,12 @@ class CFapi(object):
         json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules', data=data)
         return json_response
 
-    def create_access_rule(self, zone_id, mode, conf_target, conf_value, notes=None):
+    def create_zone_access_rule(self, zone_id, mode, conf_target, conf_value, notes=None):
         data = {"mode": mode, "configuration": {"target": conf_target, "value": conf_value}, "notes": notes}
         json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules', data=data, method='POST')
         return json_response
 
-    def update_access_rule(self, zone_id, rule_id, mode=None, notes=None):
+    def update_zone__access_rule(self, zone_id, rule_id, mode=None, notes=None):
         data = {
             'mode': mode,
             'notes': notes
@@ -797,7 +797,7 @@ class CFapi(object):
         json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules/'+rule_id, data=data, method="PATCH")
         return json_response
 
-    def delete_access_rule(self, zone_id, rule_id, cascade="none"):
+    def delete_zone_access_rule(self, zone_id, rule_id, cascade="none"):
         data = {"cascade": cascade}
         json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules/'+rule_id, data=data, method="DELETE")
         return json_response
