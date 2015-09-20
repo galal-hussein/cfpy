@@ -677,8 +677,132 @@ class CFapi(object):
     def disable_railgun(self, railgun_id):
         json_response = self.api_request('/railguns/'+railgun_id, method="DELETE")
 
+    # Custom Pages for a Zone
+    def get_available_custom_pages(self, zone_id):
+        json_response = self.api_request('/zones/'+zone_id+'/custom_pages')
+        return json_response
+
+    def get_custom_page_details(self, zone_id, page_id):
+        json_response = self.api_request('/zones/'+zone_id+'/custom_pages/'+page_id)
+        return json_response
+
+    def update_custom_page_url(self, zone_id, page_id, url, state):
+        data = {'url': url, 'state': state}
+        json_response = self.api_request('/zones/'+zone_id+'/custom_pages/'+page_id, data=data, method="PUT")
+        return json_response
+
+    # Custom SSL for a Zone
+    def create_ssl_configuration(self, zone_id, certificate, private_key, bundle_method='ubiquitous'):
+        data = {"certificate": certificate, "private_key": private_key, "bundle_method": bundle_method}
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates', data=data, method="POST")
+        return json_response
+
+    def list_ssl_configuration(self, zone_id, status=None, page=1, per_page=20, order='priority', direction=None, match='all'):
+        params = {k: v for k, v in (('page', page),
+                 ('per_page', per_page),
+                 ('order', order),
+                 ('status', status),
+                 ('direction', direction),
+                 ('match', match)) if v is not None}
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates', params=params)
+        return json_response
+
+    def get_ssl_configuration_details(self, zone_id, cert_id):
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates/'+cert_id)
+        return json_response
+
+    def update_ssl_configuration(self, zone_id, cert_id, certificate, private_key, bundle_method='ubiquitous'):
+        data = {"certificate": certificate, "private_key": private_key, "bundle_method": bundle_method}
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates/'+ cert_id, data=data, method='PATCH')
+        return json_response
+
+    def reprioritize_ssl_certificates(self, zone_id, ssl_certs):
+        data = {'certificates': ssl_certs}
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates/prioritize', data=data, method="PUT")
+        return json_response
+
+    def delete_ssl_certificate(self, zone_id, cert_id):
+        json_response = self.api_request('/zones/'+zone_id+'/custom_certificates/'+cert_id, method='DELETE')
+        return json_response
+
+    # Keyless SSL for a Zone
+    def create_keyless_ssl_configuration(self, zone_id, host, name, certificate, port=24008, bundle_method='ubiquitous'):
+        data = {
+            'host': host,
+            'port': port,
+            'name': name,
+            'certificate': certificate,
+            'bundle_method': bundle_method
+        }
+        json_response = self.api_request('/zones/'+zone_id+'/keyless_certificates', data=data, method='POST')
+        return json_response
+
+    def list_keyless_ssl_configurations(self, zone_id):
+        json_response = self.api_request('/zones/'+zone_id+'/keyless_certificates')
+        return json_response
+
+    def get_keyless_ssl_details(self, zone_id, cert_id):
+        json_response = self.api_request('/zones/'+zone_id+'/keyless_certificates/'+cert_id)
+        return json_response
+
+    def update_keyless_configuration(self, zone_id, conf_id, host, name, port=24008, enabled=None):
+        data = {
+            'host': host,
+            'port': port,
+            'name': name,
+            'enabled': enabled
+        }
+        json_response = self.api_request('/zones/'+zone_id+'/keyless_certificates/'+conf_id, data=data, method='PATCH')
+        return json_response
+
+    def delete_keyless_configuration(self, zone_id, conf_id):
+        json_response = self.api_request('/zones/'+zone_id+'/keyless_certificates/'+conf_id, method='DELETE')
+        return json_response
+
+    # Firewall access rule for a Zone
+    def list_zone_access_rules(self, zone_id,
+                                     scope_type=None,
+                                     mode=None,
+                                     configuration_target=None,
+                                     configuration_value=None,
+                                     page=1,
+                                     per_page=20,
+                                     order=None,
+                                     direction=None,
+                                     match="all"):
+        data = {
+            'scope_type': scope_type,
+            'mode': mode,
+            'configuration_target': configuration_target,
+            'configuration_value': configuration_value,
+            'page': page,
+            'per_page': per_page,
+            'order': order,
+            'direction': direction,
+            'match': match
+        }
+        json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules', data=data)
+        return json_response
+
+    def create_access_rule(self, zone_id, mode, conf_target, conf_value, notes=None):
+        data = {"mode": mode, "configuration": {"target": conf_target, "value": conf_value}, "notes": notes}
+        json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules', data=data, method='POST')
+        return json_response
+
+    def update_access_rule(self, zone_id, rule_id, mode=None, notes=None):
+        data = {
+            'mode': mode,
+            'notes': notes
+        }
+        json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules/'+rule_id, data=data, method="PATCH")
+        return json_response
+
+    def delete_access_rule(self, zone_id, rule_id, cascade="none"):
+        data = {"cascade": cascade}
+        json_response = self.api_request('/zones/'+zone_id+'/firewall/access_rules/rules/'+rule_id, data=data, method="DELETE")
+        return json_response
+
 if __name__ == '__main__':
     auth_mail = os.environ.get('CF_AUTH_MAIL')
     auth_key = os.environ.get('CF_AUTH_KEY')
     cf = CFapi(auth_mail, auth_key)
-    print cf.list_zones()
